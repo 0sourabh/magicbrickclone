@@ -7,6 +7,7 @@ import LoginPage from './LoginPage';
 import ForgotPasswordPage from './ForgotPasswordPage';
 import SignupPage from './SignupPage';
 import HelpPage from './HelpPage';
+import PostProperty from './PostProperty';
 
 const root = createRoot(document.getElementById('root'));
 
@@ -19,6 +20,7 @@ root.render(
         <Route path="/ForgotPasswordPage" element={<ForgotPasswordPage />} />
         <Route path="/SignupPage" element={<SignupPage />} />
         <Route path="/HelpPage" element={<HelpPage />} />
+        <Route path="/PostProperty" element={<PostProperty/>} />
       </Routes>
     </Router>
   </StrictMode>

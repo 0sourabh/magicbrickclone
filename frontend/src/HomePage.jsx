@@ -81,7 +81,7 @@ const HomePage = () => {
                 </Button>
                 <Button
                   as={Link}
-                  to="/login"
+                  to="/PostProperty"
                   variant="success"
                   size="sm"
                   style={{ backgroundColor: '#20c997', border: 'none' }}
