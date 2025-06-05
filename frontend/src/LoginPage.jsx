@@ -86,7 +86,7 @@ const LoginPage = () => {
                   <div className="text-center mt-4">
                     <p className="text-muted">
                       Don't have an account?{' '}
-                      <Link to="/register" style={{ color: '#0d6efd', textDecoration: 'none' }}>
+                      <Link to="/SignupPage" style={{ color: '#0d6efd', textDecoration: 'none' }}>
                         Sign up
                       </Link>
                     </p>

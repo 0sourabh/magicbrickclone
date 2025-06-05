@@ -60,6 +60,8 @@ const HomePage = () => {
                   Login
                 </Button>
                 <Button
+                   as={Link}
+                  to="/login"
                   variant="success"
                   size="sm"
                   style={{ backgroundColor: '#20c997', border: 'none' }}
@@ -88,7 +90,7 @@ const HomePage = () => {
             <a href="#" className="text-dark text-decoration-none fw-semibold">
               Commercial
             </a>
-            <a href="#" className="text-dark text-decoration-none ms-md-auto">
+            <a href="/HelpPage" className="text-dark text-decoration-none ms-md-auto">
               Help
             </a>
           </div>
