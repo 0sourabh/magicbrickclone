@@ -32,7 +32,7 @@ const LoginPage = () => {
         localStorage.setItem('token', data.token);
 
         // Redirect to the dashboard or home page
-        navigate('/dashboard');
+        navigate('/');
       } else {
         setError(data.msg || 'Login failed');
       }

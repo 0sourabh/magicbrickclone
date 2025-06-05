@@ -72,12 +72,12 @@ const HomePage = () => {
               <div>
                 <Button
                   as={Link}
-                  to="/login"
+                  to="/ProfilePage"
                   variant="outline-light"
                   size="sm"
                   className="me-2"
                 >
-                  Login
+                  Profile
                 </Button>
                 <Button
                   as={Link}
