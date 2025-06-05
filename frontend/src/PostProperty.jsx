@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Alert, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -16,21 +16,75 @@ const PostProperty = () => {
     area: '',
     bedrooms: '',
     bathrooms: '',
-    amenities: []
+    furnishing: '',
+    amenities: [],
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const amenitiesList = [
-    'Parking', 'Swimming Pool', 'Gym', 'Garden', 'Security', 
-    'Lift', 'Power Backup', 'Water Supply', 'Play Area'
+    'Parking', 'Swimming Pool', 'Gym', 'Garden', 'Security',
+    'Lift', 'Power Backup', 'Water Supply', 'Play Area',
   ];
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false || images.length < 5) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setValidated(true);
+    setError('');
+    setSuccess(false);
+
+    if (images.length < 5) {
+      setError('Please upload at least 5 images.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (Array.isArray(formData[key])) {
+          formData[key].forEach((item) => formDataToSend.append(key, item));
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+      images.forEach((image) => formDataToSend.append('images', image));
+
+      const response = await fetch('http://localhost:8000/api/properties', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Ensure the user is authenticated
+        },
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.msg || 'Failed to post property');
+      }
+
+      const data = await response.json();
+      setSuccess(true);
+      setFormData({
+        title: '',
+        description: '',
+        propertyType: '',
+        price: '',
+        location: '',
+        area: '',
+        bedrooms: '',
+        bathrooms: '',
+        furnishing: '',
+        amenities: [],
+      });
+      setImages([]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -57,7 +111,7 @@ const PostProperty = () => {
 
   const handleAmenityChange = (amenity) => {
     const updatedAmenities = formData.amenities.includes(amenity)
-      ? formData.amenities.filter(a => a !== amenity)
+      ? formData.amenities.filter((a) => a !== amenity)
       : [...formData.amenities, amenity];
     setFormData({ ...formData, amenities: updatedAmenities });
   };
@@ -107,7 +161,22 @@ const PostProperty = () => {
               <Card className="shadow-sm border-0">
                 <Card.Body className="p-4 p-md-5">
                   <h3 className="mb-4 text-center" style={{ color: '#20c997' }}>Post Your Property</h3>
-                  
+
+                  {error && <Alert variant="danger">{error}</Alert>}
+                  {success && (
+                    <Modal show={success} onHide={() => setSuccess(false)}>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Success</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>Your property has been posted successfully!</Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="success" onClick={() => setSuccess(false)}>
+                          Close
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+                  )}
+
                   <Form noValidate validated={validated} onSubmit={handleSubmit}>
                     {/* Basic Information */}
                     <h5 className="mb-3">Basic Information</h5>
@@ -352,8 +421,9 @@ const PostProperty = () => {
                         type="submit"
                         className="rounded-pill px-5 py-2"
                         style={{ backgroundColor: '#20c997', border: 'none' }}
+                        disabled={loading}
                       >
-                        Post Property
+                        {loading ? 'Posting...' : 'Post Property'}
                       </Button>
                     </div>
                   </Form>
