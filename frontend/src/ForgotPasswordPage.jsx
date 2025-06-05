@@ -1,10 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './App.css';
 
 const ForgotPasswordPage = () => {
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [dob, setDob] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, phone, dob, newPassword }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess('Password reset successful!');
+      } else {
+        setError(data.msg || 'Failed to reset password');
+      }
+    } catch (err) {
+      setError('An error occurred while resetting your password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="forgot-password-page">
       {/* Header - Consistent with other pages */}
@@ -40,7 +84,10 @@ const ForgotPasswordPage = () => {
                   <p className="text-muted">Enter your details to recover your account</p>
                 </div>
 
-                <Form>
+                {error && <Alert variant="danger">{error}</Alert>}
+                {success && <Alert variant="success">{success}</Alert>}
+
+                <Form onSubmit={handleForgotPassword}>
                   <Form.Group className="mb-3">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control 
@@ -48,6 +95,8 @@ const ForgotPasswordPage = () => {
                       placeholder="Enter your registered email" 
                       className="border-1 shadow-none"
                       style={{ borderColor: '#20c997' }}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </Form.Group>
@@ -59,16 +108,46 @@ const ForgotPasswordPage = () => {
                       placeholder="Enter your registered phone number" 
                       className="border-1 shadow-none"
                       style={{ borderColor: '#20c997' }}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       required
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4">
+                  <Form.Group className="mb-3">
                     <Form.Label>Date of Birth</Form.Label>
                     <Form.Control 
                       type="date" 
                       className="border-1 shadow-none"
                       style={{ borderColor: '#20c997' }}
+                      value={dob}
+                      onChange={(e) => setDob(e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>New Password</Form.Label>
+                    <Form.Control 
+                      type="password" 
+                      placeholder="Enter your new password" 
+                      className="border-1 shadow-none"
+                      style={{ borderColor: '#20c997' }}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-4">
+                    <Form.Label>Confirm New Password</Form.Label>
+                    <Form.Control 
+                      type="password" 
+                      placeholder="Confirm your new password" 
+                      className="border-1 shadow-none"
+                      style={{ borderColor: '#20c997' }}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                     />
                   </Form.Group>
@@ -78,8 +157,9 @@ const ForgotPasswordPage = () => {
                     type="submit" 
                     className="w-100 rounded-pill py-2 mt-3"
                     style={{ backgroundColor: '#20c997', border: 'none' }}
+                    disabled={loading}
                   >
-                    Verify Identity
+                    {loading ? 'Resetting Password...' : 'Verify Identity'}
                   </Button>
 
                   <div className="text-center mt-4">

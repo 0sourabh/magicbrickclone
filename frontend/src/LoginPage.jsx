@@ -1,10 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Button, Form, Alert } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 import './App.css';
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save the token to localStorage
+        localStorage.setItem('token', data.token);
+
+        // Redirect to the dashboard or home page
+        navigate('/dashboard');
+      } else {
+        setError(data.msg || 'Login failed');
+      }
+    } catch (err) {
+      setError('An error occurred while logging in');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-page">
       {/* Header - Consistent with HomePage */}
@@ -40,7 +78,9 @@ const LoginPage = () => {
                   <p className="text-muted">Sign in to access your account</p>
                 </div>
 
-                <Form>
+                {error && <Alert variant="danger">{error}</Alert>}
+
+                <Form onSubmit={handleLogin}>
                   <Form.Group className="mb-3">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control 
@@ -48,6 +88,9 @@ const LoginPage = () => {
                       placeholder="Enter your email" 
                       className="border-1 shadow-none"
                       style={{ borderColor: '#20c997' }}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </Form.Group>
 
@@ -58,6 +101,9 @@ const LoginPage = () => {
                       placeholder="Enter your password" 
                       className="border-1 shadow-none"
                       style={{ borderColor: '#20c997' }}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
                     />
                     <div className="text-end mt-2">
                       <Link to="/ForgotPasswordPage" style={{ color: '#0d6efd', textDecoration: 'none' }}>
@@ -71,8 +117,9 @@ const LoginPage = () => {
                     type="submit" 
                     className="w-100 rounded-pill py-2 mt-3"
                     style={{ backgroundColor: '#20c997', border: 'none' }}
+                    disabled={loading}
                   >
-                    Sign In
+                    {loading ? 'Signing In...' : 'Sign In'}
                   </Button>
 
                   <div className="d-flex align-items-center my-4">
@@ -80,8 +127,6 @@ const LoginPage = () => {
                     <span className="px-3 text-muted">OR</span>
                     <div style={{ borderTop: '1px solid #dee2e6', flexGrow: 1 }}></div>
                   </div>
-
-                  
 
                   <div className="text-center mt-4">
                     <p className="text-muted">
