@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Button, Form, Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom'; // Add this import
 import './App.css';
 
 const categories = [
@@ -34,7 +35,7 @@ const HomePage = () => {
         <Container>
           <div className="d-flex justify-content-between align-items-center">
             <h3 className="m-0">
-              <span className="fw-bold" style={{ color: '#20c997' }}>Magic</span>Bricks
+              <span className="fw-bold" style={{ color: '#20c997' }}>Magic</span>BricksClone
             </h3>
             <div className="d-flex gap-3 align-items-center">
               <Dropdown>
@@ -44,15 +45,25 @@ const HomePage = () => {
                 <Dropdown.Menu>
                   <Dropdown.Item>Delhi</Dropdown.Item>
                   <Dropdown.Item>Mumbai</Dropdown.Item>
-                  <Dropdown.Item>Indore</Dropdown.Item>
+                  <Dropdown.Item>Dewas</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
 
               <div>
-                <Button variant="outline-light" size="sm" className="me-2">
+                <Button
+                  as={Link}
+                  to="/login"
+                  variant="outline-light"
+                  size="sm"
+                  className="me-2"
+                >
                   Login
                 </Button>
-                <Button variant="success" size="sm" style={{ backgroundColor: '#20c997', border: 'none' }}>
+                <Button
+                  variant="success"
+                  size="sm"
+                  style={{ backgroundColor: '#20c997', border: 'none' }}
+                >
                   Post Property
                 </Button>
               </div>
@@ -169,7 +180,7 @@ const HomePage = () => {
       <footer className="bg-dark text-white py-4">
         <Container>
           <div className="text-center">
-            <p className="mb-0">© {new Date().getFullYear()} MagicBricks. All rights reserved.</p>
+            <p className="mb-0">© {new Date().getFullYear()} MagicBricksClone. All rights reserved.</p>
           </div>
         </Container>
       </footer>
