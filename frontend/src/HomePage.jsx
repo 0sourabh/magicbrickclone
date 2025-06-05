@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Button, Form, Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; // Add this import
+import { Link } from 'react-router-dom';
 import './App.css';
 
 const categories = [
@@ -27,7 +27,27 @@ const categories = [
   },
 ];
 
+const homeImages = [
+  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+  'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+  'https://images.unsplash.com/photo-1554469384-e58fac16e23a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
+];
+
 const HomePage = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === homeImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="home-page">
       {/* Header */}
@@ -60,8 +80,8 @@ const HomePage = () => {
                   Login
                 </Button>
                 <Button
-                   as={Link}
-                  to="/login"
+                  as={Link}
+                  to="/PostProperty"
                   variant="success"
                   size="sm"
                   style={{ backgroundColor: '#20c997', border: 'none' }}
@@ -97,25 +117,69 @@ const HomePage = () => {
         </Container>
       </nav>
 
-      {/* Hero Section */}
-      <section className="hero-section py-5" style={{ backgroundColor: '#f8f9fa' }}>
-        <Container className="py-4">
+      {/* Hero Section with Background Slideshow */}
+      <section 
+        className="hero-section py-5 position-relative" 
+        style={{ 
+          minHeight: '500px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {/* Background Images */}
+        <div className="position-absolute w-100 h-100" style={{ overflow: 'hidden' }}>
+          {homeImages.map((img, index) => (
+            <div 
+              key={index}
+              className={`position-absolute w-100 h-100 transition-opacity ${index === currentImageIndex ? 'opacity-50' : 'opacity-0'}`}
+              style={{
+                backgroundImage: `url(${img})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                transition: 'opacity 1.5s ease-in-out',
+                zIndex: 0
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Content */}
+        <Container className="py-4 position-relative" style={{ zIndex: 1 }}>
           <div className="text-center">
-            <h2 className="mb-4 fw-bold">
+            <h2 className="mb-4 fw-bold display-4">
               Find a home you'll <span style={{ color: '#20c997' }}>love</span>
             </h2>
-            <p className="text-muted mb-4">Discover your perfect property from our curated collection</p>
-            <div className="d-flex justify-content-center flex-wrap gap-3 my-4">
-              <Button variant="dark" className="px-4 rounded-pill">
-                Buy
-              </Button>
-              <Button variant="outline-dark" className="px-4 rounded-pill">
-                Rent
-              </Button>
-              <Button variant="outline-dark" className="px-4 rounded-pill">
-                PG
-              </Button>
-            </div>
+            <p className="text-white mb-4" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+              Discover your perfect property from our curated collection
+            </p>
+           {/* ... (previous code remains the same until the buttons section) ... */}
+
+<div className="d-flex justify-content-center flex-wrap gap-3 my-4">
+  <Button 
+    variant="dark" 
+    className="px-4 rounded-pill"
+    style={{ backgroundColor: '#000', border: 'none' }}
+  >
+    Buy
+  </Button>
+  <Button 
+    variant="dark" 
+    className="px-4 rounded-pill"
+    style={{ backgroundColor: '#000', border: 'none' }}
+  >
+    Rent
+  </Button>
+  <Button 
+    variant="success" 
+    className="px-4 rounded-pill"
+    style={{ backgroundColor: '#20c997', border: 'none' }}
+  >
+    PG
+  </Button>
+</div>
+
+{/* ... (rest of the code remains the same) ... */}
 
             {/* Search Bar */}
             <Row className="justify-content-center mt-4">
@@ -182,7 +246,7 @@ const HomePage = () => {
       <footer className="bg-dark text-white py-4">
         <Container>
           <div className="text-center">
-            <p className="mb-0">© {new Date().getFullYear()} MagicBricksClone. All rights reserved.</p>
+            <p className="mb-0">© {new Date().getFullYear()} MagicBricksClone. All rights reserved.Shrivanshu,Sourabh</p>
           </div>
         </Container>
       </footer>
