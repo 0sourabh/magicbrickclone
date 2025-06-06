@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Property = require("../models/Property");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -65,22 +66,62 @@ exports.forgotPassword = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, phone, address, dob } = req.body;
-
-    // Find user by ID
-    const user = await User.findById(req.userId);
+    const { name, phone, address, dob, profileImage } = req.body;
+    const user = await User.findById(req.userId); // <--- use req.userId
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    // Update user fields
     user.name = name || user.name;
     user.phone = phone || user.phone;
     user.address = address || user.address;
     user.dob = dob || user.dob;
+    user.profileImage = profileImage || user.profileImage;
 
-    // Save the updated user
     await user.save();
 
     res.json({ msg: "Profile updated successfully" });
+  } catch (error) {
+    res.status(500).json({ msg: "Server error", error: error.message });
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  try {
+    // This will return all fields except password
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ msg: "Server error", error: error.message });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.userId).select("+password");
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Current password is incorrect" });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ msg: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ msg: "Server error", error: error.message });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.userId);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    // Optionally, delete user's properties as well
+    await Property.deleteMany({ userId: req.userId });
+
+    res.json({ msg: "Account deleted successfully" });
   } catch (error) {
     res.status(500).json({ msg: "Server error", error: error.message });
   }

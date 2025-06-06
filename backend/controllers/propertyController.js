@@ -121,7 +121,12 @@ exports.deleteProperty = async (req, res) => {
     const property = await Property.findById(req.params.id);
     if (!property) return res.status(404).json({ msg: "Property not found" });
 
-    await property.remove();
+    // Optional: Only allow the owner to delete
+    if (property.userId.toString() !== req.userId) {
+      return res.status(403).json({ msg: "Not authorized to delete this property" });
+    }
+
+    await property.deleteOne();
     res.json({ msg: "Property deleted successfully" });
   } catch (error) {
     res.status(500).json({ msg: "Server error", error: error.message });
