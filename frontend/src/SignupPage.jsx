@@ -4,6 +4,8 @@ import { Container, Row, Col, Button, Form, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './App.css';
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const SignupPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,7 +46,7 @@ const SignupPage = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -219,7 +221,7 @@ const SignupPage = () => {
                   <div className="text-center mt-4">
                     <p className="text-muted">
                       Already have an account?{' '}
-                      <Link to="/login" style={{ color: '#0d6efd', textDecoration: 'none' }}>
+                      <Link to="/" style={{ color: '#0d6efd', textDecoration: 'none' }}>
                         Login here
                       </Link>
                     </p>

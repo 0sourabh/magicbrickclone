@@ -1,40 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Carousel, Card, Badge } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 const PropertyDetails = () => {
-  // Sample property data (in a real app, you'd fetch this based on ID)
-  const properties = [
-    {
-      id: 1,
-      title: 'Modern 2BHK Flat in City Center',
-      price: '₹45,00,000',
-      location: 'Indore, MP',
-      area: '1200 sq.ft',
-      bedrooms: 2,
-      bathrooms: 2,
-      description: 'This beautiful modern flat is located in the heart of the city with all amenities nearby. The property features a spacious living area, modern kitchen, and two well-sized bedrooms with attached bathrooms.',
-      amenities: ['Parking', 'Power Backup', 'Lift', 'Security', 'Swimming Pool'],
-      postedBy: 'John Doe',
-      postedDate: '2 days ago',
-      images: [
-        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        'https://images.unsplash.com/photo-1554469384-e58fac16e23a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-      ],
-      contact: 'john@example.com',
-      postedByImage: 'https://randomuser.me/api/portraits/men/1.jpg'
-    },
-    // Add more properties as needed
-  ];
-
-  // Get the property ID from URL params
   const { id } = useParams();
-  const property = properties.find(p => p.id === parseInt(id));
+  const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!property) {
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+        const res = await fetch(`${API_BASE_URL}/api/properties/${id}`);
+        const data = await res.json();
+        setProperty(data);
+      } catch (err) {
+        setProperty(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperty();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <h2>Loading...</h2>
+      </Container>
+    );
+  }
+
+  if (!property || property.msg === "Property not found") {
     return (
       <Container className="py-5 text-center">
         <h2>Property not found</h2>
@@ -67,7 +66,7 @@ const PropertyDetails = () => {
           {/* Property Images Carousel */}
           <Col lg={7} className="mb-4">
             <Carousel interval={null}>
-              {property.images.map((img, index) => (
+              {(property.images || []).map((img, index) => (
                 <Carousel.Item key={index}>
                   <div className="property-image-container" style={{ height: '500px' }}>
                     <img
@@ -94,10 +93,15 @@ const PropertyDetails = () => {
                 </span>
               </div>
 
+              {/* Add property type here */}
+              <div className="mb-3">
+                <span className="badge bg-info text-dark">{property.propertyType}</span>
+              </div>
+
               <div className="d-flex gap-4 mb-4">
                 <div>
                   <span className="d-block text-muted small">Area</span>
-                  <span className="fw-bold">{property.area}</span>
+                  <span className="fw-bold">{property.area} sq.ft</span>
                 </div>
                 <div>
                   <span className="d-block text-muted small">Bedrooms</span>
@@ -117,7 +121,7 @@ const PropertyDetails = () => {
               <div className="mb-4">
                 <h5 className="fw-bold mb-3">Amenities</h5>
                 <div className="d-flex flex-wrap gap-2">
-                  {property.amenities.map((amenity, index) => (
+                  {(property.amenities || []).map((amenity, index) => (
                     <Badge key={index} bg="light" text="dark" className="px-3 py-2">
                       {amenity}
                     </Badge>
@@ -130,23 +134,26 @@ const PropertyDetails = () => {
                 <Card.Body>
                   <div className="d-flex align-items-center">
                     <img
-                      src={property.postedByImage}
-                      alt={property.postedBy}
+                      src="https://cdn.pixabay.com/photo/2017/01/31/13/14/animal-2023924_1280.png"
+                      alt={property.userId?.name || "Owner"}
                       className="rounded-circle me-3"
                       style={{ width: '60px', height: '60px', objectFit: 'cover' }}
                     />
                     <div>
-                      <h6 className="mb-1 fw-bold">{property.postedBy}</h6>
-                      <p className="mb-0 text-muted small">Posted {property.postedDate}</p>
+                      <h6 className="mb-1 fw-bold">{property.userId?.name || "Owner"}</h6>
+                      <p className="mb-0 text-muted small">
+                        {property.createdAt ? `Posted ${new Date(property.createdAt).toLocaleDateString()}` : ""}
+                      </p>
+                      {property.userId?.email && (
+                        <a
+                          href={`mailto:${property.userId.email}?subject=Enquiry about your property "${property.title}"`}
+                          className="btn btn-outline-success btn-sm mt-2"
+                          style={{ backgroundColor: '#fff', borderColor: '#20c997', color: '#20c997' }}
+                        >
+                          Contact Owner
+                        </a>
+                      )}
                     </div>
-                    <Button
-                      variant="success"
-                      className="ms-auto"
-                      style={{ backgroundColor: '#20c997', border: 'none' }}
-                      href={`mailto:${property.contact}`}
-                    >
-                      Contact Owner
-                    </Button>
                   </div>
                 </Card.Body>
               </Card>

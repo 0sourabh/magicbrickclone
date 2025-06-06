@@ -4,6 +4,8 @@ import { Container, Row, Col, Button, Form, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './App.css';
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,7 +29,7 @@ const ForgotPasswordPage = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/forgot-password', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +167,7 @@ const ForgotPasswordPage = () => {
                   <div className="text-center mt-4">
                     <p className="text-muted">
                       Remember your password?{' '}
-                      <Link to="/login" style={{ color: '#0d6efd', textDecoration: 'none' }}>
+                      <Link to="/" style={{ color: '#0d6efd', textDecoration: 'none' }}>
                         Login here
                       </Link>
                     </p>

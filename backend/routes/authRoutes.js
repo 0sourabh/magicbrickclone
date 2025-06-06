@@ -4,7 +4,7 @@ const { register, login, forgotPassword, updateProfile, getProfile, changePasswo
 const auth = require("../middleware/authMiddleware");
 
 router.post("/register", register);
-router.post("/login", login);
+router.post("/", login);
 router.post("/forgot-password", forgotPassword);
 router.put("/update-profile", auth, updateProfile);
 router.get("/me", auth, getProfile);

@@ -4,6 +4,8 @@ import { Container, Row, Col, Button, Form, Dropdown, Card } from 'react-bootstr
 import { Link } from 'react-router-dom';
 import './App.css';
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const categories = [
   {
     img: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
@@ -110,10 +112,24 @@ const sampleProperties = [
 
 const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [properties, setProperties] = useState(sampleProperties);
+  const [properties, setProperties] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [propertyType, setPropertyType] = useState('');
   const [budget, setBudget] = useState('');
+
+  useEffect(() => {
+    // Fetch properties from backend
+    const fetchProperties = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/properties`);
+        const data = await res.json();
+        setProperties(data);
+      } catch (err) {
+        setProperties([]);
+      }
+    };
+    fetchProperties();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -125,19 +141,22 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    // Filter properties based on search criteria
-    const filtered = sampleProperties.filter(property => {
-      const matchesCity = property.location.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesType = propertyType === '' || 
-        property.title.toLowerCase().includes(propertyType.toLowerCase());
-      const matchesBudget = budget === '' || 
-        (parseInt(property.price.replace(/[^0-9]/g, '')) <= parseInt(budget.replace(/[^0-9]/g, '')));
-      
-      return matchesCity && matchesType && matchesBudget;
-    });
-    setProperties(filtered);
+    // Build query string
+    let query = [];
+    if (searchTerm) query.push(`location=${encodeURIComponent(searchTerm)}`);
+    if (propertyType) query.push(`propertyType=${encodeURIComponent(propertyType)}`);
+    if (budget) query.push(`maxPrice=${encodeURIComponent(budget)}`);
+    const queryString = query.length ? `?${query.join('&')}` : '';
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/properties${queryString}`);
+      const data = await res.json();
+      setProperties(data);
+    } catch (err) {
+      setProperties([]);
+    }
   };
 
   return (
@@ -321,14 +340,16 @@ const HomePage = () => {
             <h4 className="fw-bold mb-3">Recently Posted Properties</h4>
             <p className="text-muted">Find the latest properties posted by our users</p>
           </div>
-          
           {properties.length === 0 ? (
             <div className="text-center py-5">
               <h5>No properties found matching your search criteria</h5>
               <Button 
                 variant="success" 
-                onClick={() => {
-                  setProperties(sampleProperties);
+                onClick={async () => {
+                  // Reset to all properties from backend
+                  const res = await fetch(`${API_BASE_URL}/api/properties`);
+                  const data = await res.json();
+                  setProperties(data);
                   setSearchTerm('');
                   setPropertyType('');
                   setBudget('');
@@ -341,12 +362,12 @@ const HomePage = () => {
           ) : (
             <Row className="g-4">
               {properties.map((property) => (
-                <Col xs={12} md={6} lg={4} key={property.id}>
+                <Col xs={12} md={6} lg={4} key={property._id}>
                   <Card className="h-100 shadow-sm border-0">
-                    <Link to={`/property/${property.id}`} className="text-decoration-none">
+                    <Link to={`/property/${property._id}`} className="text-decoration-none">
                       <div style={{ height: '200px', overflow: 'hidden' }}>
                         <img 
-                          src={property.image} 
+                          src={property.images && property.images.length > 0 ? property.images[0] : "https://via.placeholder.com/300x180?text=No+Image"} 
                           className="card-img-top w-100 h-100" 
                           alt={property.title}
                           style={{ objectFit: 'cover' }}
@@ -363,7 +384,7 @@ const HomePage = () => {
                       </p>
                       <div className="d-flex gap-3 mb-3">
                         <span className="text-muted small">
-                          <i className="bi bi-house-door me-1"></i> {property.area}
+                          <i className="bi bi-house-door me-1"></i> {property.area} sq.ft
                         </span>
                         <span className="text-muted small">
                           <i className="bi bi-door-closed me-1"></i> {property.bedrooms} Beds
@@ -372,27 +393,18 @@ const HomePage = () => {
                           <i className="bi bi-bucket me-1"></i> {property.bathrooms} Baths
                         </span>
                       </div>
-                      
                       <div className="d-flex align-items-center mt-3 pt-2 border-top">
                         <img 
-                          src={property.postedByImage} 
-                          alt={property.postedBy}
+                          src="https://cdn.pixabay.com/photo/2017/01/31/13/14/animal-2023924_1280.png"
+                          alt="Posted By"
                           className="rounded-circle me-2"
                           style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                         />
                         <div>
-                          <p className="mb-0 small fw-bold">{property.postedBy}</p>
-                          <p className="mb-0 text-muted small">Posted {property.postedDate}</p>
+                          <p className="mb-0 small fw-bold">{property.userId?.name || "Owner"}</p>
+                          <p className="mb-0 text-muted small">{property.createdAt ? `Posted ${new Date(property.createdAt).toLocaleDateString()}` : ""}</p>
                         </div>
-                        <Button 
-                          variant="outline-success" 
-                          size="sm" 
-                          className="ms-auto"
-                          style={{ borderColor: '#20c997', color: '#20c997' }}
-                          href={`mailto:${property.contact}`}
-                        >
-                          Contact
-                        </Button>
+                        {/* You can add a contact button if you want */}
                       </div>
                     </Card.Body>
                   </Card>

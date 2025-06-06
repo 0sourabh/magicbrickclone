@@ -17,7 +17,8 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${API_BASE_URL}/api/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

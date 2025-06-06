@@ -4,6 +4,8 @@ import { Container, Row, Col, Button, Card, Form, Alert, Tab, Tabs } from 'react
 import { Link, useNavigate } from 'react-router-dom';
 import './App.css';
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
   const [properties, setProperties] = useState([]);
@@ -25,11 +27,11 @@ const ProfilePage = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:8000/api/auth/me', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.status === 401) {
-          navigate('/login');
+          navigate('/');
           return;
         }
         const data = await res.json();
@@ -48,7 +50,7 @@ const ProfilePage = () => {
     const fetchProperties = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:8000/api/properties/my', {
+        const res = await fetch(`${API_BASE_URL}/api/properties/my`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -69,7 +71,7 @@ const ProfilePage = () => {
     setSuccessMessage('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8000/api/auth/update-profile', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +119,7 @@ const ProfilePage = () => {
     }
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8000/api/auth/change-password', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +148,7 @@ const ProfilePage = () => {
     setDeleteMsg('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8000/api/auth/delete-account', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/delete-account`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -172,7 +174,7 @@ const ProfilePage = () => {
     if (!window.confirm("Are you sure you want to delete this property?")) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8000/api/properties/${propertyId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/properties/${propertyId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

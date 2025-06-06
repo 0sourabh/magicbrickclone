@@ -18,7 +18,6 @@ root.render(
       <Routes>
         <Route path="/Dashboard" element={<HomePage/>} />
         <Route path="/" element={<LoginPage/>} />
-        
         <Route path="/ForgotPasswordPage" element={<ForgotPasswordPage />} />
         <Route path="/SignupPage" element={<SignupPage />} />
         <Route path="/HelpPage" element={<HelpPage />} />
