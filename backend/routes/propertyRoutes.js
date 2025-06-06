@@ -8,7 +8,7 @@ const {
   getUserProperties,
 } = require("../controllers/propertyController");
 
-router.post("/", auth, upload.single("image"), addProperty);
+router.post("/", auth, upload.array("images", 10), addProperty);
 router.get("/", getAllProperties);
 router.get("/my", auth, getUserProperties);
 

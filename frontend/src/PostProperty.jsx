@@ -52,8 +52,12 @@ const PostProperty = () => {
       });
       images.forEach((image) => formDataToSend.append('images', image));
 
+      const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:8000/api/properties', {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formDataToSend,
       });
 

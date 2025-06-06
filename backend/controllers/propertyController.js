@@ -91,7 +91,7 @@ exports.updateProperty = async (req, res) => {
       amenities,
     } = req.body;
 
-    const images = req.files ? req.files.map((file) => file.path) : undefined;
+    const images = req.files ? req.files.map((file) => file.path) : [];
 
     const property = await Property.findById(req.params.id);
     if (!property) return res.status(404).json({ msg: "Property not found" });
