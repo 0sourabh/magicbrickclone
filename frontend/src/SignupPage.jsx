@@ -56,7 +56,7 @@ const SignupPage = () => {
 
       if (response.ok) {
         setSuccess('Account created successfully!');
-        setTimeout(() => navigate('/login'), 2000); // Redirect to login page after 2 seconds
+        setTimeout(() => navigate('/'), 2000); // Redirect to login page after 2 seconds
       } else {
         setError(data.msg || 'Signup failed');
       }
