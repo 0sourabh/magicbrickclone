@@ -53,7 +53,7 @@ const PropertyDetails = () => {
             <h3 className="m-0">
               <span className="fw-bold" style={{ color: '#20c997' }}>Magic</span>BricksClone
             </h3>
-            <Link to="/" className="btn btn-outline-light btn-sm">
+            <Link to="/dashboard" className="btn btn-outline-light btn-sm">
               Back to Home
             </Link>
           </div>
