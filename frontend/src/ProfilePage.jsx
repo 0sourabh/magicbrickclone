@@ -167,7 +167,7 @@ const ProfilePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
   const handleDeleteProperty = async (propertyId) => {
