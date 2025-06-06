@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, Dropdown, Card, Carousel } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, Dropdown, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './App.css';
 
@@ -111,6 +111,9 @@ const sampleProperties = [
 const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [properties, setProperties] = useState(sampleProperties);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [propertyType, setPropertyType] = useState('');
+  const [budget, setBudget] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -121,6 +124,21 @@ const HomePage = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Filter properties based on search criteria
+    const filtered = sampleProperties.filter(property => {
+      const matchesCity = property.location.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = propertyType === '' || 
+        property.title.toLowerCase().includes(propertyType.toLowerCase());
+      const matchesBudget = budget === '' || 
+        (parseInt(property.price.replace(/[^0-9]/g, '')) <= parseInt(budget.replace(/[^0-9]/g, '')));
+      
+      return matchesCity && matchesType && matchesBudget;
+    });
+    setProperties(filtered);
+  };
 
   return (
     <div className="home-page">
@@ -227,47 +245,31 @@ const HomePage = () => {
             <p className="text-white mb-4" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
               Discover your perfect property from our curated collection
             </p>
-            <div className="d-flex justify-content-center flex-wrap gap-3 my-4">
-              <Button 
-                variant="dark" 
-                className="px-4 rounded-pill"
-                style={{ backgroundColor: '#000', border: 'none' }}
-              >
-                Buy
-              </Button>
-              <Button 
-                variant="dark" 
-                className="px-4 rounded-pill"
-                style={{ backgroundColor: '#000', border: 'none' }}
-              >
-                Rent
-              </Button>
-              <Button 
-                variant="success" 
-                className="px-4 rounded-pill"
-                style={{ backgroundColor: '#20c997', border: 'none' }}
-              >
-                PG
-              </Button>
-            </div>
 
             {/* Search Bar */}
             <Row className="justify-content-center mt-4">
               <Col md={10} lg={8}>
-                <Form className="d-flex flex-column flex-md-row gap-2 bg-white shadow-sm p-3 rounded">
+                <Form onSubmit={handleSearch} className="d-flex flex-column flex-md-row gap-2 bg-white shadow-sm p-3 rounded">
                   <Form.Control 
-                    placeholder="City e.g. Bangalore" 
+                    placeholder="Search by city e.g. Indore" 
                     className="border-0 shadow-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                   <Form.Control 
-                    placeholder="Property Type e.g. Flat" 
+                    placeholder="Property Type e.g. Flat, Villa" 
                     className="border-0 shadow-none"
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
                   />
                   <Form.Control 
-                    placeholder="Budget" 
+                    placeholder="Max Budget e.g. 5000000" 
                     className="border-0 shadow-none"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
                   />
                   <Button
+                    type="submit"
                     variant="success"
                     className="w-100 w-md-auto rounded-pill px-4"
                     style={{ backgroundColor: '#20c997', border: 'none' }}
@@ -320,67 +322,84 @@ const HomePage = () => {
             <p className="text-muted">Find the latest properties posted by our users</p>
           </div>
           
-          <Row className="g-4">
-            {properties.map((property) => (
-              <Col xs={12} md={6} lg={4} key={property.id}>
-                <Card className="h-100 shadow-sm border-0">
-                  <Link to={`/property/${property.id}`} className="text-decoration-none">
-                    <div style={{ height: '200px', overflow: 'hidden' }}>
-                      <img 
-                        src={property.image} 
-                        className="card-img-top w-100 h-100" 
-                        alt={property.title}
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                  </Link>
-                  <Card.Body>
-                    <div className="d-flex justify-content-between align-items-start mb-2">
-                      <h5 className="card-title mb-1">{property.title}</h5>
-                      <span className="badge bg-success">{property.price}</span>
-                    </div>
-                    <p className="card-text text-muted small mb-2">
-                      <i className="bi bi-geo-alt-fill me-1"></i> {property.location}
-                    </p>
-                    <div className="d-flex gap-3 mb-3">
-                      <span className="text-muted small">
-                        <i className="bi bi-house-door me-1"></i> {property.area}
-                      </span>
-                      <span className="text-muted small">
-                        <i className="bi bi-door-closed me-1"></i> {property.bedrooms} Beds
-                      </span>
-                      <span className="text-muted small">
-                        <i className="bi bi-bucket me-1"></i> {property.bathrooms} Baths
-                      </span>
-                    </div>
-                    
-                    <div className="d-flex align-items-center mt-3 pt-2 border-top">
-                      <img 
-                        src={property.postedByImage} 
-                        alt={property.postedBy}
-                        className="rounded-circle me-2"
-                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                      />
-                      <div>
-                        <p className="mb-0 small fw-bold">{property.postedBy}</p>
-                        <p className="mb-0 text-muted small">Posted {property.postedDate}</p>
+          {properties.length === 0 ? (
+            <div className="text-center py-5">
+              <h5>No properties found matching your search criteria</h5>
+              <Button 
+                variant="success" 
+                onClick={() => {
+                  setProperties(sampleProperties);
+                  setSearchTerm('');
+                  setPropertyType('');
+                  setBudget('');
+                }}
+                style={{ backgroundColor: '#20c997', border: 'none' }}
+              >
+                Reset Search
+              </Button>
+            </div>
+          ) : (
+            <Row className="g-4">
+              {properties.map((property) => (
+                <Col xs={12} md={6} lg={4} key={property.id}>
+                  <Card className="h-100 shadow-sm border-0">
+                    <Link to={`/property/${property.id}`} className="text-decoration-none">
+                      <div style={{ height: '200px', overflow: 'hidden' }}>
+                        <img 
+                          src={property.image} 
+                          className="card-img-top w-100 h-100" 
+                          alt={property.title}
+                          style={{ objectFit: 'cover' }}
+                        />
                       </div>
-                      <Button 
-                        variant="outline-success" 
-                        size="sm" 
-                        className="ms-auto"
-                        style={{ borderColor: '#20c997', color: '#20c997' }}
-                        href={`mailto:${property.contact}`}
-                      >
-                        Contact
-                      </Button>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          
+                    </Link>
+                    <Card.Body>
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <h5 className="card-title mb-1">{property.title}</h5>
+                        <span className="badge bg-success">{property.price}</span>
+                      </div>
+                      <p className="card-text text-muted small mb-2">
+                        <i className="bi bi-geo-alt-fill me-1"></i> {property.location}
+                      </p>
+                      <div className="d-flex gap-3 mb-3">
+                        <span className="text-muted small">
+                          <i className="bi bi-house-door me-1"></i> {property.area}
+                        </span>
+                        <span className="text-muted small">
+                          <i className="bi bi-door-closed me-1"></i> {property.bedrooms} Beds
+                        </span>
+                        <span className="text-muted small">
+                          <i className="bi bi-bucket me-1"></i> {property.bathrooms} Baths
+                        </span>
+                      </div>
+                      
+                      <div className="d-flex align-items-center mt-3 pt-2 border-top">
+                        <img 
+                          src={property.postedByImage} 
+                          alt={property.postedBy}
+                          className="rounded-circle me-2"
+                          style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                        />
+                        <div>
+                          <p className="mb-0 small fw-bold">{property.postedBy}</p>
+                          <p className="mb-0 text-muted small">Posted {property.postedDate}</p>
+                        </div>
+                        <Button 
+                          variant="outline-success" 
+                          size="sm" 
+                          className="ms-auto"
+                          style={{ borderColor: '#20c997', color: '#20c997' }}
+                          href={`mailto:${property.contact}`}
+                        >
+                          Contact
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          )}
         </Container>
       </section>
 
