@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, Dropdown } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, Dropdown, Card, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './App.css';
 
@@ -35,8 +35,82 @@ const homeImages = [
   'https://images.unsplash.com/photo-1554469384-e58fac16e23a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
 ];
 
+const sampleProperties = [
+  {
+    id: 1,
+    title: 'Modern 2BHK Flat in City Center',
+    price: '₹45,00,000',
+    location: 'Indore, MP',
+    area: '1200 sq.ft',
+    bedrooms: 2,
+    bathrooms: 2,
+    postedBy: 'John Doe',
+    postedDate: '2 days ago',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    contact: 'john@example.com',
+    postedByImage: 'https://randomuser.me/api/portraits/men/1.jpg'
+  },
+  {
+    id: 2,
+    title: 'Luxury Villa with Pool',
+    price: '₹1,20,00,000',
+    location: 'Bhopal, MP',
+    area: '4500 sq.ft',
+    bedrooms: 4,
+    bathrooms: 3,
+    postedBy: 'Jane Smith',
+    postedDate: '1 week ago',
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    contact: 'jane@example.com',
+    postedByImage: 'https://randomuser.me/api/portraits/women/1.jpg'
+  },
+  {
+    id: 3,
+    title: 'Residential Plot in Developing Area',
+    price: '₹25,00,000',
+    location: 'Dewas, MP',
+    area: '2400 sq.ft',
+    bedrooms: 0,
+    bathrooms: 0,
+    postedBy: 'Robert Johnson',
+    postedDate: '3 days ago',
+    image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    contact: 'robert@example.com',
+    postedByImage: 'https://randomuser.me/api/portraits/men/2.jpg'
+  },
+  {
+    id: 4,
+    title: 'Commercial Space in Prime Location',
+    price: '₹75,00,000',
+    location: 'Indore, MP',
+    area: '3000 sq.ft',
+    bedrooms: 0,
+    bathrooms: 2,
+    postedBy: 'Sarah Williams',
+    postedDate: '5 days ago',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    contact: 'sarah@example.com',
+    postedByImage: 'https://randomuser.me/api/portraits/women/2.jpg'
+  },
+  {
+    id: 5,
+    title: '3BHK Apartment with Lake View',
+    price: '₹65,00,000',
+    location: 'Indore, MP',
+    area: '1800 sq.ft',
+    bedrooms: 3,
+    bathrooms: 2,
+    postedBy: 'Michael Brown',
+    postedDate: '1 day ago',
+    image: 'https://images.unsplash.com/photo-1554469384-e58fac16e23a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    contact: 'michael@example.com',
+    postedByImage: 'https://randomuser.me/api/portraits/men/3.jpg'
+  }
+];
+
 const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [properties, setProperties] = useState(sampleProperties);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -153,33 +227,29 @@ const HomePage = () => {
             <p className="text-white mb-4" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
               Discover your perfect property from our curated collection
             </p>
-           {/* ... (previous code remains the same until the buttons section) ... */}
-
-<div className="d-flex justify-content-center flex-wrap gap-3 my-4">
-  <Button 
-    variant="dark" 
-    className="px-4 rounded-pill"
-    style={{ backgroundColor: '#000', border: 'none' }}
-  >
-    Buy
-  </Button>
-  <Button 
-    variant="dark" 
-    className="px-4 rounded-pill"
-    style={{ backgroundColor: '#000', border: 'none' }}
-  >
-    Rent
-  </Button>
-  <Button 
-    variant="success" 
-    className="px-4 rounded-pill"
-    style={{ backgroundColor: '#20c997', border: 'none' }}
-  >
-    PG
-  </Button>
-</div>
-
-{/* ... (rest of the code remains the same) ... */}
+            <div className="d-flex justify-content-center flex-wrap gap-3 my-4">
+              <Button 
+                variant="dark" 
+                className="px-4 rounded-pill"
+                style={{ backgroundColor: '#000', border: 'none' }}
+              >
+                Buy
+              </Button>
+              <Button 
+                variant="dark" 
+                className="px-4 rounded-pill"
+                style={{ backgroundColor: '#000', border: 'none' }}
+              >
+                Rent
+              </Button>
+              <Button 
+                variant="success" 
+                className="px-4 rounded-pill"
+                style={{ backgroundColor: '#20c997', border: 'none' }}
+              >
+                PG
+              </Button>
+            </div>
 
             {/* Search Bar */}
             <Row className="justify-content-center mt-4">
@@ -242,11 +312,81 @@ const HomePage = () => {
         </Container>
       </section>
 
+      {/* Recently Posted Properties Section */}
+      <section className="py-5 bg-light">
+        <Container>
+          <div className="text-center mb-5">
+            <h4 className="fw-bold mb-3">Recently Posted Properties</h4>
+            <p className="text-muted">Find the latest properties posted by our users</p>
+          </div>
+          
+          <Row className="g-4">
+            {properties.map((property) => (
+              <Col xs={12} md={6} lg={4} key={property.id}>
+                <Card className="h-100 shadow-sm border-0">
+                  <div style={{ height: '200px', overflow: 'hidden' }}>
+                    <img 
+                      src={property.image} 
+                      className="card-img-top w-100 h-100" 
+                      alt={property.title}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-start mb-2">
+                      <h5 className="card-title mb-1">{property.title}</h5>
+                      <span className="badge bg-success">{property.price}</span>
+                    </div>
+                    <p className="card-text text-muted small mb-2">
+                      <i className="bi bi-geo-alt-fill me-1"></i> {property.location}
+                    </p>
+                    <div className="d-flex gap-3 mb-3">
+                      <span className="text-muted small">
+                        <i className="bi bi-house-door me-1"></i> {property.area}
+                      </span>
+                      <span className="text-muted small">
+                        <i className="bi bi-door-closed me-1"></i> {property.bedrooms} Beds
+                      </span>
+                      <span className="text-muted small">
+                        <i className="bi bi-bucket me-1"></i> {property.bathrooms} Baths
+                      </span>
+                    </div>
+                    
+                    <div className="d-flex align-items-center mt-3 pt-2 border-top">
+                      <img 
+                        src={property.postedByImage} 
+                        alt={property.postedBy}
+                        className="rounded-circle me-2"
+                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                      />
+                      <div>
+                        <p className="mb-0 small fw-bold">{property.postedBy}</p>
+                        <p className="mb-0 text-muted small">Posted {property.postedDate}</p>
+                      </div>
+                      <Button 
+                        variant="outline-success" 
+                        size="sm" 
+                        className="ms-auto"
+                        style={{ borderColor: '#20c997', color: '#20c997' }}
+                        href={`mailto:${property.contact}`}
+                      >
+                        Contact
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+          
+        </Container>
+      </section>
+
       {/* Footer */}
       <footer className="bg-dark text-white py-4">
         <Container>
           <div className="text-center">
-            <p className="mb-0">© {new Date().getFullYear()} MagicBricksClone. All rights reserved.Shrivanshu,Sourabh</p>
+            <p className="mb-0">© {new Date().getFullYear()} MagicBricksClone. All rights reserved. Shrivanshu, Sourabh</p>
           </div>
         </Container>
       </footer>
