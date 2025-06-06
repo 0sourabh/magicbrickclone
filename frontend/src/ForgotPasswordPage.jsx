@@ -63,7 +63,7 @@ const ForgotPasswordPage = () => {
                 variant="outline-light" 
                 size="sm" 
                 as={Link} 
-                to="/login"
+                to="/"
                 style={{ borderColor: '#20c997', color: '#20c997' }}
               >
                 Back to Login

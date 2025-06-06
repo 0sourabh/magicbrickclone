@@ -203,7 +203,7 @@ const ProfilePage = () => {
                 variant="outline-light" 
                 size="sm" 
                 as={Link} 
-                to="/"
+                to="/Dashboard"
                 style={{ borderColor: '#20c997', color: '#20c997' }}
               >
                 Back to Home

@@ -52,17 +52,7 @@ const LoginPage = () => {
             <h3 className="m-0">
               <span style={{ color: '#20c997' }} className="fw-bold">Magic</span>BricksClone
             </h3>
-            <div className="d-flex gap-3 align-items-center">
-              <Button 
-                variant="outline-light" 
-                size="sm" 
-                as={Link} 
-                to="/Dashboard"
-                style={{ borderColor: '#20c997', color: '#20c997' }}
-              >
-                Back to Home
-              </Button>
-            </div>
+          
           </div>
         </Container>
       </header>

@@ -9,7 +9,7 @@ import SignupPage from './SignupPage';
 import HelpPage from './HelpPage';
 import PostProperty from './PostProperty';
 import ProfilePage from './ProfilePage';
-
+import PropertyDetails from './PropertyDetails';
 const root = createRoot(document.getElementById('root'));
 
 root.render(
@@ -24,6 +24,7 @@ root.render(
         <Route path="/HelpPage" element={<HelpPage />} />
         <Route path="/PostProperty" element={<PostProperty/>} />
         <Route path="/ProfilePage" element={<ProfilePage/>} />
+         <Route path="/property/:id" element={<PropertyDetails />} />
       </Routes>
     </Router>
   </StrictMode>

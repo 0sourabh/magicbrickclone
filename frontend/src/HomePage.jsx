@@ -324,14 +324,16 @@ const HomePage = () => {
             {properties.map((property) => (
               <Col xs={12} md={6} lg={4} key={property.id}>
                 <Card className="h-100 shadow-sm border-0">
-                  <div style={{ height: '200px', overflow: 'hidden' }}>
-                    <img 
-                      src={property.image} 
-                      className="card-img-top w-100 h-100" 
-                      alt={property.title}
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
+                  <Link to={`/property/${property.id}`} className="text-decoration-none">
+                    <div style={{ height: '200px', overflow: 'hidden' }}>
+                      <img 
+                        src={property.image} 
+                        className="card-img-top w-100 h-100" 
+                        alt={property.title}
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
+                  </Link>
                   <Card.Body>
                     <div className="d-flex justify-content-between align-items-start mb-2">
                       <h5 className="card-title mb-1">{property.title}</h5>
