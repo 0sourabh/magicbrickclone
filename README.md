@@ -4,7 +4,7 @@ This is a full-stack clone of the MagicBricks website, built using the **MERN** 
 
 ## 🌐 Live Demo
 
-🔗 [Deployed Website on Render](https://magicbrickclone.onrender.com)
+🔗 [Deployed Website on Vercel](https://magicbrickclone-x6hu.vercel.app/)
 
 ---
 
