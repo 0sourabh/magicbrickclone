@@ -54,9 +54,6 @@ const PostProperty = () => {
 
       const response = await fetch('http://localhost:8000/api/properties', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Ensure the user is authenticated
-        },
         body: formDataToSend,
       });
 

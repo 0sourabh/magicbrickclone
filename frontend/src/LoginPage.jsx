@@ -32,7 +32,7 @@ const LoginPage = () => {
         localStorage.setItem('token', data.token);
 
         // Redirect to the dashboard or home page
-        navigate('/');
+        navigate('/dashboard'); // Adjust the route as needed
       } else {
         setError(data.msg || 'Login failed');
       }
@@ -57,7 +57,7 @@ const LoginPage = () => {
                 variant="outline-light" 
                 size="sm" 
                 as={Link} 
-                to="/"
+                to="/Dashboard"
                 style={{ borderColor: '#20c997', color: '#20c997' }}
               >
                 Back to Home

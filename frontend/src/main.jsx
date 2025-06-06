@@ -16,8 +16,9 @@ root.render(
   <StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/Dashboard" element={<HomePage/>} />
+        <Route path="/" element={<LoginPage/>} />
+        
         <Route path="/ForgotPasswordPage" element={<ForgotPasswordPage />} />
         <Route path="/SignupPage" element={<SignupPage />} />
         <Route path="/HelpPage" element={<HelpPage />} />
